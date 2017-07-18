@@ -7,20 +7,27 @@
 
 import nltk
 
-#test for nouns
+# test sentences for verifying each tag interpreter module
 sentence1 = "Russell Westbrook, who plays for the Oklahoma City Thunder won the 2017 NBA MVP"
-#test for adjective + noun(s)
+
 sentence2 = "Russell Westbook is a talented basketball player and a fancy hombre"
-#test for number + noun
+
 sentence3 = "Russell Westbrook averaged over 30 points, 10 rebounds and 10 assists"
 
 sentence4 = "Who was the 44th President of the United States"
 
-tokens = nltk.word_tokenize(sentence2)
-tagged = nltk.pos_tag(tokens)
+sentence5 = "In what year did OutKast release their second album"
 
-print(tagged)
+#we only need a small class to hold the main subject, any sub-topics, and the resulting SQL
+class structured_query:
+	_subject					#this is a string
+	_sub_topics = []			#this is a list, although it will often be a single element
+	_resulting_sql			#this is a string
+	_related_sql = []		#this is a list
 
+	def __init__(self, subject, sub_topics):
+		self._subject = subject
+		self._sub_topics = sub_topics
 
 #self explanatory, saves a bit of writing
 def is_noun(type):
@@ -65,6 +72,7 @@ def extract_numbers(token_list):
 
 	return numbers
 
+
 def noun_w_adj(token_list):
 	noun_adj_pair= []
 
@@ -77,8 +85,6 @@ def noun_w_adj(token_list):
 
 	return noun_adj_pair
 				
-
-
 
 def extract_nouns(token_list):
 
@@ -94,6 +100,9 @@ def extract_nouns(token_list):
 	#return the list for further use
 	return nouns
 
+def handle_input(user_query):
+	tokenized_query = nltk.word_tokenize(user_query)
+	tagged_query = nltk.pos_tag(tokenized_query)
 
-print(noun_w_adj(tagged))
+	return tagged_query
 
