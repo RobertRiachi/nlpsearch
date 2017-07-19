@@ -28,12 +28,18 @@ def output_subject_analysis(out_query):
 	
 def analyze(tagged_input_query):
 	number_subject = qsi.extract_numbers(tagged_input_query)
-	noun_subject= qsi.extract_nouns(tagged_input_query)
+	possible_subject_list = qsi.extract_nouns(tagged_input_query)
 	adjective_subject = qsi.noun_w_adj(tagged_input_query)
 
-	#TODO
-	#decide which is the main thing, which are the sub-parts
-	#initilaize a structured_query object
+	#FOR DEBUGGING
+	#print(number_subject)
+	#print(noun_subject)
+	#print(adjective_subject)
+
+	#this function does not yet exist, but this is how it will be called
+	#send_to_graph_interface(possible_subject_list)
+
+	return "Not Fully Implemented"
 
 
 if __name__ == "__main__":

@@ -20,14 +20,17 @@ sentence5 = "In what year did OutKast release their second album"
 
 #we only need a small class to hold the main subject, any sub-topics, and the resulting SQL
 class structured_query:
-	_subject					#this is a string
-	_sub_topics = []			#this is a list, although it will often be a single element
-	_resulting_sql			#this is a string
-	_related_sql = []		#this is a list
-
 	def __init__(self, subject, sub_topics):
 		self._subject = subject
 		self._sub_topics = sub_topics
+		self._resulting_sql = ""
+		self._related_sql = []
+
+class possible_subject:
+	def __init__(self, subject):
+		self._subject = subject
+		self._graph_distance = -1
+
 
 #self explanatory, saves a bit of writing
 def is_noun(type):
@@ -36,21 +39,22 @@ def is_noun(type):
 	else:
 		return False
 
+
 #returns a non-empty list of the original noun plus any possible multi word nouns
 #from nouns that immediately follow the original noun
 def multi_word_noun(token_list, i):
-	more_words = []
+	big_word = ""
 	j = 1
 
-	more_words.append(token_list[i][0])
+	build_string = token_list[i][0]
 	
 	#if there are more nouns back to back, add that to the list
 	while(i+j < len(token_list) and is_noun(token_list[i+j][1])):
 		#we can simply concatenate the last element of the list 
-		more_words.append(more_words[-1] + ' ' + token_list[i+j][0])
+		build_string += ' ' + token_list[i+j][0]
 		j += 1
 
-	return more_words
+	return build_string, j-1
 
 
 #this function makes the assumption that a number will precede a noun to identify it
@@ -89,13 +93,24 @@ def noun_w_adj(token_list):
 def extract_nouns(token_list):
 
 	nouns = []
+	skip = 0
 
 	#iterate over all the words
 	for i in range(len(token_list)):
+
 		#check if that token is a token
 		if(is_noun(token_list[i][1])):
-			#add the noun to the noun list
-			nouns += multi_word_noun(token_list, i)
+
+			if(skip > 0):
+				skip -= 1
+				continue
+			else:
+				#add the noun to the noun list
+				noun, skip = multi_word_noun(token_list, i)
+				temp = possible_subject(noun)
+				nouns.append(temp)
+		else:
+			skip = 0
 
 	#return the list for further use
 	return nouns
