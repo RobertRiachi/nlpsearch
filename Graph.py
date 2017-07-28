@@ -21,9 +21,13 @@ def findnode(word, label, ngraph):
 		
 #Example findnode('LOL', 'catName', neograph)
 
+#Deletes Knowledge Graph currently existing on your server where ngraph is that server info - see neograph var
+def deletegraph(ngraph):
+	ngraph.data("MATCH (n) DETACH DELETE n")
+
 
 #Instantly creates a knowledge graph from wikipedia of the subject and depth you want :^) Robert original
-#Subject = str, numoflevels = int, and numoflevels depth must exist in wikipedia
+#Subject = str, numoflevels = int, and numoflevels depth must exist in wikipedia, db = ur existing server - look at neograph var
 def ngraphcreate(subject, numoflevels, db):
 	db.data("CREATE INDEX ON :Category(catId)")
 	db.data("CREATE INDEX ON :Category(catName)")
