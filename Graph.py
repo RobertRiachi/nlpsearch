@@ -20,3 +20,15 @@ def findnode(word, label, ngraph):
 		print("Node does not exist")
 		
 #Example findnode('LOL', 'catName', neograph)
+
+
+#Instantly creates a knowledge graph from wikipedia of the subject and depth you want :^) Robert original
+#Subject = str, numoflevels = int, and numoflevels depth must exist in wikipedia
+def ngraphcreate(subject, numoflevels, db):
+	db.data("CREATE INDEX ON :Category(catId)")
+	db.data("CREATE INDEX ON :Category(catName)")
+	db.data("CREATE INDEX ON :Category(catName)")
+	db.data("CREATE (c:Category:RootCategory {catId: 0, catName: '"+subject+"', subcatsFetched : false, pagesFetched : false, level: 0 })")
+	for i in range(numoflevels):
+		db.data(":param level:"+(i+1)+"")
+		db.data("MATCH (c:Category { fetched: false, level: $level - 1}) CALL apoc.load.json('https://en.wikipedia.org/w/api.php?format=json&action=query&list=categorymembers&cmtype=subcat&cmtitle=Category:' + apoc.text.urlencode(c.catName) + '&cmprop=ids%7Ctitle&cmlimit=500') YIELD value as results UNWIND results.query.categorymembers AS subcat MERGE (sc:Category {catId: subcat.pageid}) ON CREATE SET sc.catName = substring(subcat.title,9), sc.fetched = false, sc.level = $level WITH sc,c CALL apoc.create.addLabels(sc,['Level' +  $level + 'Category']) YIELD node MERGE (sc)-[:SUBCAT_OF]->(c) WITH DISTINCT c SET c.fetched = true")
