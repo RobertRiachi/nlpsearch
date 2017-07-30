@@ -11,15 +11,15 @@ def wordpath(word, ngraph):
 	return words
 
 	
-def findnode(word, label, ngraph):
-	node = ngraph.data("MATCH (n {"+label+": '"+word+"' }) return n")
+def findnode(idnum, ngraph):
+	node = ngraph.data("MATCH (n {ID: "+str(idnum)+"}) return n")
 	
 	if node:
 		return node
 	else:
 		print("Node does not exist")
 		
-#Example findnode('LOL', 'catName', neograph)
+#Example findnode(17745, neograph)
 
 #Deletes Knowledge Graph currently existing on your server where ngraph is that server info - see neograph var
 def deletegraph(ngraph):
