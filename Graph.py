@@ -3,13 +3,6 @@ import re
 
 #Link Graph Database
 neograph = Graph(password="password")
-
-#Wordpath: takes a word and a neo4j graph database, returns the cat nodes beloging to shortest path to the root node
-def wordpath(word, ngraph):
-	path = ngraph.data("MATCH path = shortestpath((x:Category {catName: "+word+"})-[:SUBCAT_OF*]->(root:RootCategory)) RETURN path")
-	words = re.findall('"([^"]*)"', str(path))
-	return words
-
 	
 def findnode(idnum, ngraph):
 	node = ngraph.data("MATCH (n {ID: "+str(idnum)+"}) return n")
@@ -18,6 +11,18 @@ def findnode(idnum, ngraph):
 		return node
 	else:
 		print("Node does not exist")
+		
+def findlabel(node, ngraph):
+	label = ngraph.data("MATCH (r) WHERE r.catName="+node+" RETURN labels(r)")
+	label = str(label)
+	return label
+	
+def findpath(node1, node2, ngraph):
+	label1 = findlabel(node1, ngraph)
+	label2 = findlabel(node2, ngraph)
+	path = ngraph.data("MATCH (f:"+label1+" {catName: "+node1+"}), (t:"+label2+" {catName: "+node2+"}), p = shortestPath((f)-[]-(t)) RETURN p"
+	
+	return path
 		
 #Example findnode(17745, neograph)
 
