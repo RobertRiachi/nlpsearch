@@ -3,26 +3,41 @@ import re
 
 #Link Graph Database
 neograph = Graph(password="password")
-	
-def findnode(idnum, ngraph):
-	node = ngraph.data("MATCH (n {ID: "+str(idnum)+"}) return n")
-	
-	if node:
-		return node
-	else:
-		print("Node does not exist")
-		
+
+
+#Given a Node, if exists returns label else returns false
 def findlabel(node, ngraph):
-	label = ngraph.data("MATCH (r) WHERE r.catName="+node+" RETURN labels(r)")
-	label = str(label)
-	return label
-	
+	label = ngraph.data("MATCH (r) WHERE r.catName='"+node+"' RETURN labels(r)")
+	if label:
+		s = str(label[0])
+		j = s.replace("'", "\"")
+		d = json.loads(j)
+		label = d['labels(r)'][0]
+		return str(label)
+	else:
+		return False
+
+
+#Given a word and a graph if node exists returns level, else returns false
+def findnodelevel(word, ngraph):
+	label = findlabel(word, ngraph)
+	if not label:
+		return False
+	node = ngraph.data("Match(n:"+label+" {catName:'"+word+"'}) return n")
+	s = str(node[0])
+	j = re.findall(r'level:(.*?),',s)
+	return j
+
+#Given two nodes as strings and a graph, returns true if node1 is child of node2 else false
+#Nodes must exist in graph	
 def findpath(node1, node2, ngraph):
 	label1 = findlabel(node1, ngraph)
 	label2 = findlabel(node2, ngraph)
-	path = ngraph.data("MATCH (f:"+label1+" {catName: "+node1+"}), (t:"+label2+" {catName: "+node2+"}), p = shortestPath((f)-[]-(t)) RETURN p"
-	
-	return path
+	path = ngraph.data("MATCH (f:"+label1+" {catName: '"+node1+"'}), (t:"+label2+" {catName: '"+node2+"'}), p = shortestPath((f)-[]-(t)) RETURN p")
+	if path:
+		return true
+	else:
+		return false
 		
 #Example findnode(17745, neograph)
 
