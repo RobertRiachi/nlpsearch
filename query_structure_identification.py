@@ -20,9 +20,10 @@ sentence5 = "In what year did OutKast release their second album"
 
 #we only need a small class to hold the main subject, any sub-topics, and the resulting SQL
 class structured_query:
-	def __init__(self, subject, sub_topics):
+	def __init__(self, subject, sub_topics, related_topics):
 		self._subject = subject
 		self._sub_topics = sub_topics
+		self._related_topics = related_topics
 		self._resulting_sql = ""
 		self._related_sql = []
 
